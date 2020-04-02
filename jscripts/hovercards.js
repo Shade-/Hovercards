@@ -333,7 +333,7 @@ var Hovercards = {
 		}, options);
 
 		// Disable on click
-		$('body').on('click', 'a[data-uid]', function() {
+		$(document).on('click', 'a[data-uid]', function() {
 
 			// Disable this URL is inside the same hovercard - might happen
 			if ($(this).closest('.drop').length) {
@@ -347,7 +347,7 @@ var Hovercards = {
 
 		});
 
-		$('body').on('mouseenter', 'a[data-uid]', function() {
+		$(document).on('mouseenter', 'a[data-uid]', function() {
 
 			// Disable this URL is inside the same hovercard - might happen
 			if ($(this).closest('.drop').length) {
@@ -423,7 +423,7 @@ var Hovercards = {
 
 					if (Hovercards.exists(data)) {
 
-						$.each($.parseJSON(data), function(key, value) {
+						$.each(data, function(key, value) {
 							return Hovercards.usersHandler.saveUserInCache(value);
 						});
 

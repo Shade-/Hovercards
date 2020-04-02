@@ -16,4 +16,4 @@ $l['hovercards_settings_fields_to_use'] = 'Fields to use';
 $l['hovercards_settings_fields_to_use_desc'] = 'Select what data you would like to show in a single hovercard. You can reference to a specific data point named FIELD with the following simple syntax: <b>{FIELD}</b>. This syntax is available only in Hovercards templates. Fields are gathered from your board\'s _users and _userfields tables.';
 
 $l['hovercards_settings_drop_position'] = 'Card positioning';
-$l['hovercards_settings_drop_position_desc'] = 'Select where should be attached the card relative to its attached element. This setting is experimental.';
+$l['hovercards_settings_drop_position_desc'] = 'Select where should be attached the card relative to its attached element.';
