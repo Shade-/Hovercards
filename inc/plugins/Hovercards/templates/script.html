@@ -1,0 +1,30 @@
+<script type="text/javascript">
+
+    Hovercards.template = {$template}; // Required, do not modify
+    Hovercards.buildTemplateCallback = function(html, user) {
+
+        for (var k in user) {
+
+          var v = user[k],
+              finalReplacement = v;
+
+          // Dateline, process
+          if ($.isNumeric(v) && v.length == 10) {
+              v = Hovercards.utilities.processDateline(v, k);
+          }
+
+          finalReplacement = finalReplacement.replace('{value}', v);
+
+          html = html.replace(new RegExp('{' + k + '}', 'g'), finalReplacement);
+
+        }
+
+        return html;
+
+    };
+
+    $(document).ready(function() {
+        Hovercards.init({$opts}); // Required, do not modify
+    });
+
+</script>

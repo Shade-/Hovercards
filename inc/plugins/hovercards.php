@@ -1,13 +1,13 @@
 <?php
 /**
  * Hovercards
- * 
+ *
  * Display a delightful preview of profiles when you hover on usernames.
  *
  * @package Hovercards
  * @author  Shade <shad3-@outlook.com>
  * @license Copyrighted ©
- * @version 1.1
+ * @version 1.2
  */
 
 if (!defined('IN_MYBB')) {
@@ -18,8 +18,12 @@ if (!defined("PLUGINLIBRARY")) {
     define("PLUGINLIBRARY", MYBB_ROOT."inc/plugins/pluginlibrary.php");
 }
 
+$GLOBALS['hovercardsVersion'] = "1.2";
+
 function hovercards_info()
 {
+    global $hovercardsVersion;
+
     hovercards_plugin_edit();
 
     if (hovercards_is_installed()) {
@@ -56,7 +60,7 @@ function hovercards_info()
         'description'   =>  'Display a delightful preview of profiles when you hover on usernames.' . $description,
         'website'       =>  'https://www.mybboost.com/forum-hovercards',
         'author'        =>  'Shade',
-        'version'       =>  '1.1',
+        'version'       =>  $hovercardsVersion,
         'compatibility' =>  '18*',
     ];
 }
@@ -119,7 +123,7 @@ bottom right=Bottom right',
     // Add stylesheets
     $PL->stylesheet('hovercards.css', file_get_contents(dirname(__FILE__) . '/Hovercards/stylesheets/hovercards.css'));
 
-    // Add templates       
+    // Add templates
     $dir       = new DirectoryIterator(dirname(__FILE__) . '/Hovercards/templates');
     $templates = array();
     foreach ($dir as $file) {
@@ -263,16 +267,24 @@ function hovercards_ad()
 $plugins->add_hook("global_start", "hovercards_preload_template");
 function hovercards_preload_template()
 {
-    $GLOBALS['templatelist'] = implode(',', array_filter(array_merge((array) explode(',', $GLOBALS['templatelist']), ['hovercards_template'])));
+    $GLOBALS['templatelist'] = implode(',',
+      array_filter(
+        array_merge(
+          (array) explode(',', $GLOBALS['templatelist']),
+          ['hovercards_template', 'hovercards_script']
+        )
+      )
+    );
 }
 
 $plugins->add_hook("pre_output_page", "hovercards_load_template");
 function hovercards_load_template(&$content)
 {
-    global $templates, $mybb;
+    global $templates, $mybb, $lang, $hovercardsVersion;
+
+    $lang->load('hovercards');
 
     eval("\$template = \"".$templates->get("hovercards_template")."\";");
-
     $template = json_encode($template);
 
     $opts = [];
@@ -287,20 +299,14 @@ function hovercards_load_template(&$content)
 
     $opts = json_encode($opts);
 
+    eval("\$script = \"".$templates->get("hovercards_script")."\";");
+
     $html = <<<HTML
 
 <script type="text/javascript" src="jscripts/tether.js"></script>
 <script type="text/javascript" src="jscripts/drop.js"></script>
-<script type="text/javascript" src="jscripts/hovercards.min.js?v=1.1"></script>
-<script type="text/javascript">
-
-    Hovercards.template = $template;
-
-    $(document).ready(function() {
-        Hovercards.init($opts);
-    });
-
-</script>
+<script type="text/javascript" src="jscripts/hovercards.min.js?v={$hovercardsVersion}"></script>
+{$script}
 
 HTML;
 
@@ -438,7 +444,11 @@ function hovercards_settings_saver()
 {
     global $mybb, $page, $settingsToReplace;
 
-    if ($mybb->request_method == "post" and $mybb->input['upsetting'] and $page->active_action == "settings" and $mybb->input['gid'] == hovercards_settings_gid()) {
+    if ($mybb->request_method == "post"
+        and $mybb->input['upsetting']
+        and $page->active_action == "settings"
+        and $mybb->input['gid'] == hovercards_settings_gid()
+    ) {
 
         foreach($settingsToReplace as $setting => $option) {
 
@@ -458,7 +468,10 @@ function hovercards_settings_replacer($args)
 {
     global $form, $lang, $mybb, $page, $settingsToReplace, $db;
 
-    if ($page->active_action != "settings" and $mybb->input['action'] != "change") {
+    if ($page->active_action != "settings"
+        and $mybb->input['action'] != "change"
+        and $mybb->input['gid'] == hovercards_settings_gid()
+    ) {
         return false;
     }
 
