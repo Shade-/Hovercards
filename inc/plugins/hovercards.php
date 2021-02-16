@@ -6,8 +6,8 @@
  *
  * @package Hovercards
  * @author  Shade <shad3-@outlook.com>
- * @license Copyrighted ©
- * @version 1.2
+ * @license MIT https://opensource.org/licenses/MIT
+ * @version 1.3
  */
 
 if (!defined('IN_MYBB')) {
@@ -18,7 +18,7 @@ if (!defined("PLUGINLIBRARY")) {
     define("PLUGINLIBRARY", MYBB_ROOT."inc/plugins/pluginlibrary.php");
 }
 
-$GLOBALS['hovercardsVersion'] = "1.2";
+$GLOBALS['hovercardsVersion'] = "1.3";
 
 function hovercards_info()
 {
@@ -255,7 +255,7 @@ function hovercards_ad()
 
     if (!in_array($mybb->user['uid'], (array) $plugins[$info['name']]['ad_shown'])) {
 
-        flash_message('Thank you for using ' . $info['name'] . '! You might also be interested in other great plugins on <a href="https://www.mybboost.com">MyBBoost</a>, where you can also get support for ' . $info['name'] . ' itself.<br /><small>This message will not be shown again to you.</small>', 'success');
+        flash_message('Thank you for downloading ' . $info['name'] . '! You might also be interested in other great plugins at <a href="https://www.mybboost.com">MyBBoost</a>.<br /><small>This message will not be shown again to you.</small>', 'success');
 
         $plugins[$info['name']]['ad_shown'][] = $mybb->user['uid'];
         $cache->update('shade_plugins', $plugins);
@@ -323,7 +323,9 @@ function hovercards_xmlhttp()
 
     if ($mybb->input['action'] == 'hovercards') {
 
-        $uids = (is_array($mybb->input['uids'])) ? implode("','", (array) $mybb->input['uids']) : null;
+        header('Content-Type: application/json');
+
+        $uids = (is_array($mybb->input['uids'])) ? implode("','", array_map('intval', (array) $mybb->input['uids'])) : null;
 
         if ($uids and $mybb->settings['hovercards_fields_to_use']) {
 
@@ -395,13 +397,13 @@ function hovercards_xmlhttp()
 
                 }
 
-                header('Content-Type: application/json');
                 echo json_encode($users, JSON_PRETTY_PRINT);
-                exit;
 
             }
 
         }
+
+        exit;
 
     }
 }

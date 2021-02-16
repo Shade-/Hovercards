@@ -10,12 +10,16 @@
 
           // Dateline, process
           if ($.isNumeric(v) && v.length == 10) {
-              v = Hovercards.utilities.processDateline(v, k);
+              finalReplacement = Hovercards.utilities.processDateline(v, k);
           }
 
-          finalReplacement = finalReplacement.replace('{value}', v);
+          if (typeof finalReplacement !== 'object') {
 
-          html = html.replace(new RegExp('{' + k + '}', 'g'), finalReplacement);
+            finalReplacement = finalReplacement.replace('{value}', v);
+
+            html = html.replace(new RegExp('{' + k + '}', 'g'), finalReplacement);
+
+          }
 
         }
 
